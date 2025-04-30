@@ -1,14 +1,15 @@
-function C = computeC(q, qd, qdd)
-    % computeC returns the Coriolis & centrifugal vector C(q, q̇, q̈)
-    % q, qd, qdd are 3x1 vectors: [q1; q2; q3], [q1_d; q2_d; q3_d], [q1_dd; q2_dd; q3_dd]
+function C = computeC(q, qd)
+    % computeC returns the Coriolis & centrifugal vector C(q, q̇)
+    % q, qd, are 3x1 vectors: [q1; q2; q3], [q1_d; q2_d; q3_d]
     
-    q1 = q(1); q2 = q(2); q3 = q(3);
-    q1_d = qd(1); q2_d = qd(2); q3_d = qd(3);
-    q1_dd = qdd(1); q2_dd = qdd(2); q3_dd = qdd(3);
+    q2 = q(2); 
+    q3 = q(3);
+    q1_d = qd(1); 
+    q2_d = qd(2); 
+    q3_d = qd(3);
     
-    % Paste your full symbolic expression for C here
-    C = [-(9*q1_dd*(q1_dd + q2_dd + q3_dd - 3)*(4*cos(2*q2 + q3) + 12*cos(2*q2) + cos(2*q2 + 2*q3) + 4*cos(q3) + 13))/3200;
-        (351*q2_dd)/1600 + (27*q3_dd)/1600 + (2943*cos(q2 + q3))/1600 + (8829*cos(q2))/800 - (9*q2_dd^2*cos(q3))/400 - (9*q3_dd^2*cos(q3))/800 - (117*q1_dd*q2_dd)/1600 - (9*q1_dd*q3_dd)/1600 - (63*q2_dd*q3_dd)/800 + (9*q1_d^2*sin(2*q2 + q3))/200 + (27*q1_d^2*sin(2*q2))/200 - (2943*q1_dd*cos(q2 + q3))/8000 - (2943*q2_dd*cos(q2 + q3))/8000 - (2943*q3_dd*cos(q2 + q3))/8000 + (9*q1_d^2*sin(2*q2 + 2*q3))/800 - (8829*q1_dd*cos(q2))/4000 - (8829*q2_dd*cos(q2))/4000 + (27*q2_dd*cos(q3))/400 - (8829*q3_dd*cos(q2))/4000 + (27*q3_dd*cos(q3))/800 - (117*q2_dd^2)/1600 - (9*q3_dd^2)/1600 - (9*q1_d^2*q1_dd*sin(2*q2 + 2*q3))/3200 - (9*q1_d^2*q2_dd*sin(2*q2 + 2*q3))/3200 - (9*q1_d^2*q3_dd*sin(2*q2 + 2*q3))/3200 - (9*q1_dd*q2_dd*cos(q3))/400 - (9*q1_dd*q3_dd*cos(q3))/800 - (27*q2_dd*q3_dd*cos(q3))/800 - (9*q1_d^2*q1_dd*sin(2*q2 + q3))/800 - (9*q1_d^2*q2_dd*sin(2*q2 + q3))/800 - (9*q1_d^2*q3_dd*sin(2*q2 + q3))/800 - (27*q1_d^2*q1_dd*sin(2*q2))/800 - (27*q1_d^2*q2_dd*sin(2*q2))/800 - (27*q1_d^2*q3_dd*sin(2*q2))/800;
-        (27*q2_dd)/1600 + (9*q3_dd)/800 + (2943*cos(q2 + q3))/2000 + (117*q2_dd^2)/(1600*q3_dd) - (9*q2_dd^2*cos(q3))/400 + (27*q1_d^2*sin(q3))/1600 + (27*q2_d^2*sin(q3))/800 - (9*q1_dd*q2_dd)/1600 - (9*q1_dd*q3_dd)/1600 - (9*q2_dd*q3_dd)/800 + (27*q1_d^2*sin(2*q2 + q3))/1600 - (2943*q1_dd*cos(q2 + q3))/8000 - (2943*q2_dd*cos(q2 + q3))/8000 - (2943*q3_dd*cos(q2 + q3))/8000 + (27*q1_d^2*sin(2*q2 + 2*q3))/3200 - (8829*q2_dd*cos(q2))/4000 + (27*q2_dd*cos(q3))/800 - (117*q2_dd^2)/1600 - (9*q3_dd^2)/1600 - (9*q1_d^2*q1_dd*sin(2*q2 + 2*q3))/3200 - (9*q1_d^2*q2_dd*sin(2*q2 + 2*q3))/3200 - (9*q1_d^2*q3_dd*sin(2*q2 + 2*q3))/3200 - (9*q1_dd*q2_dd*cos(q3))/800 - (9*q2_dd*q3_dd*cos(q3))/400 + (27*q2_d*q3_d*sin(q3))/800 + (2943*q2_dd*cos(q2 + q3))/(8000*q3_dd) + (8829*q2_dd*cos(q2))/(4000*q3_dd) - (9*q1_d^2*q1_dd*sin(q3))/1600 - (9*q2_d^2*q1_dd*sin(q3))/800 - (9*q1_d^2*q3_dd*sin(q3))/1600 - (9*q2_d^2*q3_dd*sin(q3))/800 - (9*q1_d^2*q1_dd*sin(2*q2 + q3))/1600 - (9*q1_d^2*q2_dd*sin(2*q2 + q3))/800 - (9*q1_d^2*q3_dd*sin(2*q2 + q3))/1600 + (9*q2_dd^2*cos(q3))/(400*q3_dd) - (27*q1_d^2*q2_dd*sin(2*q2))/800 + (9*q1_d^2*q2_dd*sin(2*q2 + q3))/(800*q3_dd) - (9*q2_d*q3_d*q1_dd*sin(q3))/800 - (9*q2_d*q3_d*q3_dd*sin(q3))/800 + (27*q1_d^2*q2_dd*sin(2*q2))/(800*q3_dd) + (9*q1_d^2*q2_dd*sin(2*q2 + 2*q3))/(3200*q3_dd)];
-
+    C = [0;
+        (9*q1_d^2*(4*sin(2*q2 + q3) + 12*sin(2*q2) + sin(2*q2 + 2*q3)))/3200;
+        (9*q1_d^2*sin(q3))/1600 + (9*q2_d^2*sin(q3))/800 + (9*q1_d^2*sin(2*q2 + q3))/1600 + (9*q1_d^2*sin(2*q2 + 2*q3))/3200 + (9*q2_d*q3_d*sin(q3))/800];
+ 
 end

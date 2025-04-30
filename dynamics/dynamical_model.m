@@ -17,7 +17,7 @@ l3 = 0.15; % Length of Link 3 [m]
 g = 9.81; % Gravity [m/s^2]
 
 
-%% Diagonal distances in XY plane:
+%% Diagonal distances in XY plane:Tau
 rho_1 = l2 * cos(q2);
 rho_2 = l3 * cos(q2 + q3);
 
@@ -64,22 +64,9 @@ Tau = simplify(expand(Tau));
 
 
 %% Compact form:
-M11 = simplify(Tau(1) - subs(Tau(1),q_dd(1),0)/q_dd(1));
-M12 = simplify(Tau(1) - subs(Tau(1),q_dd(2),0)/q_dd(2));
-M13 = simplify(Tau(1) - subs(Tau(1),q_dd(3),0)/q_dd(3));
-M21 = simplify(Tau(2) - subs(Tau(2),q_dd(1),0)/q_dd(1));
-M22 = simplify(Tau(2) - subs(Tau(2),q_dd(2),0)/q_dd(2));
-M23 = simplify(Tau(2) - subs(Tau(2),q_dd(3),0)/q_dd(3));
-M31 = simplify(Tau(3) - subs(Tau(3),q_dd(1),0)/q_dd(1));
-M32 = simplify(Tau(3) - subs(Tau(3),q_dd(2),0)/q_dd(2));
-M33 = simplify(Tau(3) - subs(Tau(3),q_dd(3),0)/q_dd(3));
-M = [M11 M12 M13; M21 M22 M23; M31 M23 M33];
-M = simplify(expand(M));
-G = subs(Tau,{q_dd(1),q_dd(2),q_dd(3),q_d(1),q_d(2),q_d(3)}, {0,0,0,0,0,0});
-C1 = simplify(expand(Tau(1) - M(1,:)*[q1_dd q2_dd q3_dd].' + G(1)));
-C2 = simplify(expand(Tau(2) - M(2,:)*[q1_dd q2_dd q3_dd].' + G(2)));
-C3 = simplify(expand(Tau(3) - M(3,:)*[q1_dd q2_dd q3_dd].' + G(3)));
-C = [C1; C2; C3;];
+M = simplify(jacobian(Tau, q_dd));
+G = simplify(subs(Tau, [q_dd; q_d], zeros(6,1)));
+C = simplify(Tau - M*q_dd - G);
 
 
 %% Helper functions:
