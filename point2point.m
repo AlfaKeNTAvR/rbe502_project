@@ -23,6 +23,9 @@ path = [0 0.3 0.15;
         0.25 0 0.1; ...
         0.25 0.25 0.2]';
 
+% path = [0 0.3 0.10;
+%         0 0.3 0.15]';
+
 nPts = size(path,2);
 
 fprintf('Calculating the Inverse Kinematics... ');
@@ -55,8 +58,30 @@ for ii = 1 : nPts
         % Calculate the twist representing the robot's current pose.
         T = fkine(S,M,currentQ,'space');
         currentPose = T(1:3, 4);
-
     end
+
+    % q1 = currentQ(1);
+    % q2 = currentQ(2);
+    % q3 = currentQ(3);
+    % l1 = 0.3; % Length of Link 1 [m]
+    % l2 = 0.3; % Length of Link 2 [m]
+    % l3 = 0.15; % Length of Link 3 [m]
+
+    % rho_1 = l2 * cos(q2);
+    % rho_2 = l3 * cos(q2 + q3);
+
+    % Point_1 = [0; 0; l1;];
+    % Point_2 = [rho_1 * cos(q1);
+    %             rho_1 * sin(q1);
+    %             l1 + l2 * sin(q2)
+    %             ];
+    % Point_3 = [(rho_1 + rho_2) * cos(q1);
+    %             (rho_1 + rho_2) * sin(q1);
+    %             l1 + l2 * sin(q2) + l3 * sin(q2 + q3)
+    %             ];
+
+    % disp('Point 3:'), disp(Point_3);
+    % disp('Current Pose:'), disp(currentPose);
 
     % Update joints solutions with the current solution.
     waypoints(:,ii) = currentQ;

@@ -13,12 +13,12 @@ L3 = 0.15; % Lenght of Link 3 [m]
 
 % Screw Axes
 S = [0 0 1 0 0 0;
-     1 0 0 -cross([1 0 0], [0 0 L1]);
-     1 0 0 -cross([1 0 0], [0 L2 L1])]';
+     0 -1 0 -cross([0 -1 0], [0 0 L1]);
+     0 -1 0 -cross([0 -1 0], [L2 0 L1])]';
 
 % Home configuration
-R_home = [0 0 -1; 1 0 0; 0 -1 0]';
-t_home = [0 L2 L1-L3]';
+R_home = [1 0 0; 0 1 0; 0 0 1]';
+t_home = [L2+L3 0 L1]';
 M = [R_home t_home; 0 0 0 1];
 
 end
