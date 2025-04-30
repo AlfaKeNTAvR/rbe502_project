@@ -5,6 +5,17 @@ q1_d q2_d q3_d ... Velocities
 q1_dd q2_dd q3_dd ... Accelerations
 g t real; % gravity and time
 
+%% Parameters:
+m1 = 0.5; % Mass of Link 1 [kg]
+m2 = 0.5; % Mass of Link 2 [kg]
+m3 = 0.25; % Mass of Link 3 [kg]
+
+l1 = 0.3; % Length of Link 1 [m]
+l2 = 0.3; % Length of Link 2 [m]
+l3 = 0.15; % Length of Link 3 [m]
+
+g = 9.81; % Gravity [m/s^2]
+
 
 %% Diagonal distances in XY plane:
 rho_1 = l2 * cos(q2);
@@ -13,8 +24,14 @@ rho_2 = l3 * cos(q2 + q3);
 
 %% Points matrix:
 Point_1 = [0; 0; l1;];
-Point_2 = [rho_1 * cos(q1); rho_1 * sin(q1); (l2 * sin(q2)) + l1;];
-Point_3 = [rho_1 + (rho_2 * cos(q1)); rho_1 + (rho_2 * sin(q1)); (l2 * sin(q2)) + l1 + (l3 * sin(q2 + q3));];
+Point_2 = [rho_1 * cos(q1);
+            rho_1 * sin(q1);
+            l1 + l2 * sin(q2)
+            ];
+Point_3 = [(rho_1 + rho_2) * cos(q1);
+            (rho_1 + rho_2) * sin(q1);
+            l1 + l2 * sin(q2) + l3 * sin(q2 + q3)
+            ];
 
 
 %% State variables:
@@ -73,6 +90,7 @@ function dldq = derivative(l,q)
     end
     dldq = simplify(dldq);
 end
+
 % Compute_velocity:
 function vel = compute_velocity(p,q,dq)
     for i = 1:length(q)
