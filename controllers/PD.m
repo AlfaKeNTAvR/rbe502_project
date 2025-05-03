@@ -10,11 +10,11 @@ function tau = PD(theta_des, dtheta_des, theta, dtheta)
 % Output:
 %   tau         - Control torque output (3×1)
 
-    Kp = diag([10 10 10]);
-    Kv = diag([10 10 10]);
+    Kp = diag([1.0 1.0 1.0]);
+    Kv = diag([0.5 0.5 0.5]);
     
     e = theta_des - theta;
     de = dtheta_des - dtheta;
     
-    tau = Kp*e + Kv*de;
+    tau = Kp * e + Kv * de;
 end

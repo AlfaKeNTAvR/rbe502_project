@@ -1,4 +1,4 @@
-function dx = planarArmODE_CTCGravity(t, x, t_local, jointPos, jointVel, jointAcc)
+function dx = planarArmODE_CTCGravity(t, x, t_local, jointPos, jointVel, jointAcc, load)
     % Ensure t_local is a row vector
     t_local = t_local(:)';   % force row if needed
 
@@ -10,9 +10,9 @@ function dx = planarArmODE_CTCGravity(t, x, t_local, jointPos, jointVel, jointAc
     theta  = x(1:3);    % joint positions
     dtheta = x(4:6);    % joint velocities
 
-    M = computeM(theta);
-    C = computeC(theta, dtheta);
-    G = computeG(theta);
+    M = computeM(theta, load);
+    C = computeC(theta, dtheta, load);
+    G = computeG(theta, load);
 
     tau = CTC(q_des, dq_des, ddq_des, theta, dtheta, M, C, G);
     

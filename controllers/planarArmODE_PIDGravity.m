@@ -1,4 +1,4 @@
-function dx = planarArmODE_PIDGravity(t, x, q_des)
+function dx = planarArmODE_PIDGravity(t, x, q_des, load)
     % Global variables for logging and integral state
     global I
 
@@ -7,10 +7,10 @@ function dx = planarArmODE_PIDGravity(t, x, q_des)
     theta = x(1:3);
     dtheta = x(4:6);
 
-    M = computeM(theta);
-    C = computeC(theta, dtheta);
-    G = computeG(theta);
-    [tau, err] = PID(t, theta_d, dtheta_d, theta, dtheta);
+    M = computeM(theta, load);
+    C = computeC(theta, dtheta, load);
+    G = computeG(theta, load);
+    tau = PID(t, theta_d, dtheta_d, theta, dtheta) + G;
 
     % === State Derivatives ===
     dx = zeros(6, 1);

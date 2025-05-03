@@ -1,8 +1,21 @@
 function tau = CTC(theta_d, dtheta_d, ddtheta_d, theta, dtheta, M, C, G)
-
+% Computed Torque Controller for a 3-DOF robotic arm.
+%
+% Inputs:
+%   theta_d    - Desired joint positions (3×1)
+%   dtheta_d   - Desired joint velocities (3×1)
+%   ddtheta_d  - Desired joint accelerations (3×1)
+%   theta      - Current joint positions (3×1)
+%   dtheta     - Current joint velocities (3×1)
+%   M          - Inertia matrix at current state (3×3)
+%   C          - Coriolis/centrifugal vector at current state (3×1)
+%   G          - Gravity vector at current state (3×1)
+%
+% Output:
+%   tau        - Control torque command (3×1)
     
-    Kp = diag([10 10 10]);
-    Kv = diag([10 10 10]);
+    Kp = diag([1.0 1.0 1.0]);
+    Kv = diag([0.5 0.5 0.5]);
     
     e = theta_d - theta;
     de = dtheta_d - dtheta;

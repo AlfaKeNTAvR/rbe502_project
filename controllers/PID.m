@@ -1,4 +1,4 @@
-function [tau, e] = PID(t, theta_d, dtheta_d, theta, dtheta)
+function tau = PID(t, theta_d, dtheta_d, theta, dtheta)
 % PID controller for a 3-DOF robotic arm.
 %
 % Inputs:
@@ -26,9 +26,9 @@ function [tau, e] = PID(t, theta_d, dtheta_d, theta, dtheta)
     prev_t = t;
 
     % Gains
-    Kp = diag([10 10 10]);
-    Kv = diag([10 10 10]);
-    Ki = diag([0.1 0.1 0.1]);
+    Kp = diag([1.0 1.0 1.0]);
+    Kv = diag([0.5 0.5 0.5]);
+    Ki = diag([0.01 0.01 0.01]);
 
     % Errors
     e = theta_d - theta;
