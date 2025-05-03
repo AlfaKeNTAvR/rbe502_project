@@ -6,6 +6,19 @@ addpath('kinematics');
 addpath('kinematics/lib');
 
 global I; % Initialize the global variable I for integral state
+
+%% Data logging for plotting
+global actualEEPositions desiredEEPositions EEPositionErrors;
+global desiredJointPositions jointPositionErrors;
+global jointTorques;
+
+actualEEPositions = [];
+desiredEEPositions = [];
+EEPositionErrors = [];
+desiredJointPositions = [];
+jointPositionErrors = [];
+jointTorques = [];
+
 I = zeros(3,1);
 simulationTime = 0;
 
@@ -45,6 +58,7 @@ waypoints = zeros(n,nPts);
 currentPose = M(1:3,4);
 currentQ = zeros(1,n);
 trajectory = [];
+times = [];
 
 for ii = 1 : nPts
     targetPose = path(:, ii);
@@ -103,7 +117,7 @@ for ii = 1 : nPts
         clear X  % Clear the variable 'X' to asvoid conflicts with the function
 
         % Load on the end-effector [kg]
-        load = 0.25; 
+        load = 0.0; 
         controller = 'CTC'; % Choose the controller: 'PD', 'PID', or 'CTC'
 
         %% PD Control:
@@ -155,6 +169,11 @@ for ii = 1 : nPts
         end
 
         trajectory = [trajectory; X]; % Store the trajectory
+        % We need to add the previous last time to all new times to keep it running.
+        % This is because the ode45 function returns the time from 0 to tf.
+        % We need to add the previous time to all new times to keep it running.
+        T = T + simulationTime; % Update the time to keep it running
+        times =[times; T]; % Store the time
         previousQ = X(end, 1:3); % Update the previousQ for the next iteration
         I = zeros(3,1); % Reset the integral state for the next iteration
     end
@@ -163,51 +182,152 @@ end
 fprintf('\nDone. Simulating the robot...');
 
 %% Animate the robot
-title('Point2point Trajectory');
-% Start a timer:
-tic
-fps = 30;
-N = size(trajectory, 1);
-n_frames = fps * simulationTime * 0.478;
+animateRobot = true; % Set to true to animate the robot
 
-% Downsample to fixed number of frames
-idx = round(linspace(1, N, n_frames));
-frames = trajectory(idx, 1:3);
+if animateRobot
+    title('Point2point Trajectory');
+    % Start a timer:
+    tic
+    fps = 30;
+    N = size(trajectory, 1);
+    n_frames = fps * simulationTime * 0.478;
 
-robot.plot(frames, 'fps', fps, 'trail', {'r', 'LineWidth', 2});
-% End the timer:
-toc
-% Show the duration:
-fprintf('Animation time: %.2f seconds\n', toc);
-fprintf('\nDone.\n');
+    % Downsample to fixed number of frames
+    idx = round(linspace(1, N, n_frames));
+    frames = trajectory(idx, 1:3);
+
+    robot.plot(frames, 'fps', fps, 'trail', {'r', 'LineWidth', 2});
+    % End the timer:
+    toc
+    % Show the duration:
+    fprintf('Animation time: %.2f seconds\n', toc);
+    fprintf('\nDone.\n');
+end
 
 
-%% Display the Joint Torques
-% figure, hold on, grid on
-% plot(t, jointPos(1,:), 'Linewidth', 2);
-% plot(t, jointPos(2,:), 'Linewidth', 2);
-% plot(t, jointPos(3,:), 'Linewidth', 2);
-% title('Joint Position Profiles');
-% xlabel('Time [s]'), ylabel('Position [rad]');
-% legend({'Joint 1', 'Joint 2', 'Joint 3'});
-% set(gca, 'FontSize', 14);
+%% Plot Joint Positions
+N_desired = size(desiredJointPositions, 1);
+N_traj = size(trajectory, 1);               
 
-% figure, hold on, grid on
-% plot(t, jointVel(1,:), 'Linewidth', 2);
-% plot(t, jointVel(2,:), 'Linewidth', 2);
-% plot(t, jointVel(3,:), 'Linewidth', 2);
-% title('Joint Velocity Profiles');
-% xlabel('Time [s]'), ylabel('Velocity [rad/s]');
-% legend({'Joint 1', 'Joint 2', 'Joint 3'});
-% set(gca, 'FontSize', 14);
+% Generate uniform time vectors
+t_des = linspace(0, 1, N_desired); % normalized time
+t_traj = linspace(0, 1, N_traj);   % normalized to same range
 
-% figure, hold on, grid on
-% plot(t, jointAcc(1,:), 'Linewidth', 2);
-% plot(t, jointAcc(2,:), 'Linewidth', 2);
-% plot(t, jointAcc(3,:), 'Linewidth', 2);
-% title('Joint Acceleration Profiles');
-% xlabel('Time [s]'), ylabel('Acceleration [rad/s^2]');
-% legend({'Joint 1', 'Joint 2', 'Joint 3'});
-% set(gca, 'FontSize', 14);
+% Interpolate each joint
+desiredJointPositions = interp1(t_des, desiredJointPositions, t_traj);
+
+figure('Name', 'Joint 1 Positions');
+plot(times, trajectory(:,1), 'b-', 'LineWidth', 1); hold on;
+plot(times, desiredJointPositions(:,1), 'r-', 'LineWidth', 1);
+xlabel('Time (s)');
+ylabel('Position (rad)');
+legend('Actual', 'Desired');
+title('Joint 1 Positions');
+grid on;
+
+figure('Name', 'Joint 2 Positions');
+plot(times, trajectory(:,2), 'b-', 'LineWidth', 1); hold on;
+plot(times, desiredJointPositions(:,2), 'r-', 'LineWidth', 1);
+xlabel('Time (s)');
+ylabel('Position (rad)');
+legend('Actual', 'Desired');
+title('Joint 2 Positions');
+grid on;
+
+figure('Name', 'Joint 3 Positions');
+plot(times, trajectory(:,3), 'b-', 'LineWidth', 1); hold on;
+plot(times, desiredJointPositions(:,3), 'r-', 'LineWidth', 1);
+xlabel('Time (s)');
+ylabel('Position (rad)');
+legend('Actual', 'Desired');
+title('Joint 3 Positions');
+grid on;
+
+%% Plot Joint Positions Error
+N_desired = size(jointPositionErrors, 1);
+N_traj = size(trajectory, 1);               
+
+% Generate uniform time vectors
+t_des = linspace(0, 1, N_desired); % normalized time
+t_traj = linspace(0, 1, N_traj);   % normalized to same range
+
+% Interpolate each joint
+jointPositionErrors = interp1(t_des, jointPositionErrors, t_traj);
+
+figure('Name', 'Joint 1 Position Error');
+plot(times, jointPositionErrors(:,1), 'b-', 'LineWidth', 1);
+xlabel('Time (s)');
+ylabel('Error (rad)');
+title('Joint 1 Position Error');
+grid on;
+
+figure('Name', 'Joint 2 Position Error');
+plot(times, jointPositionErrors(:,2), 'r-', 'LineWidth', 1);
+xlabel('Time (s)');
+ylabel('Error (rad)');
+title('Joint 2 Position Error');
+grid on;
+
+figure('Name', 'Joint 3 Position Error');
+plot(times, jointPositionErrors(:,3), 'k-', 'LineWidth', 1);
+xlabel('Time (s)');
+ylabel('Error (rad)');
+title('Joint 3 Position Error');
+grid on;
+
+
+%% Plot Joint Velocities
+figure('Name', 'Joint 1 Velocity');
+plot(times, trajectory(:,4), 'b-', 'LineWidth', 1);
+xlabel('Time (s)');
+ylabel('Velocity (rad/s)');
+title('Joint 1 Velocity');
+grid on;
+
+figure('Name', 'Joint 2 Velocity');
+plot(times, trajectory(:,5), 'r-', 'LineWidth', 1);
+xlabel('Time (s)');
+ylabel('Velocity (rad/s)');
+title('Joint 2 Velocity');
+grid on;
+
+figure('Name', 'Joint 3 Velocity');
+plot(times, trajectory(:,6), 'k-', 'LineWidth', 1);
+xlabel('Time (s)');
+ylabel('Velocity (rad/s)');
+title('Joint 3 Velocity');
+grid on;
+
+%% Plot Joint Torques
+N_desired = size(jointTorques, 1);
+N_traj = size(trajectory, 1);               
+
+% Generate uniform time vectors
+t_des = linspace(0, 1, N_desired); % normalized time
+t_traj = linspace(0, 1, N_traj);   % normalized to same range
+
+% Interpolate each joint
+jointTorques = interp1(t_des, jointTorques, t_traj);
+
+figure('Name', 'Joint 1 Torque');
+plot(times, jointTorques(:,1), 'b-', 'LineWidth', 1);
+xlabel('Time (s)');
+ylabel('Torque (Nm)');
+title('Joint 1 Torque');
+grid on;
+
+figure('Name', 'Joint 2 Torque');
+plot(times, jointTorques(:,2), 'r-', 'LineWidth', 1);
+xlabel('Time (s)');
+ylabel('Torque (Nm)');
+title('Joint 2 Torque');
+grid on;
+
+figure('Name', 'Joint 3 Torque');
+plot(times, jointTorques(:,3), 'k-', 'LineWidth', 1);
+xlabel('Time (s)');
+ylabel('Torque (Nm)');
+title('Joint 3 Torque');
+grid on;
 
 fprintf('Program completed successfully.\n');

@@ -1,6 +1,6 @@
 function dx = planarArmODE_PIDGravity(t, x, q_des, load)
     % Global variables for logging and integral state
-    global I
+    global I desiredJointPositions jointTorques;
 
     theta_d = [q_des(1); q_des(2); q_des(3)];
     dtheta_d = [0; 0; 0];
@@ -16,4 +16,7 @@ function dx = planarArmODE_PIDGravity(t, x, q_des, load)
     dx = zeros(6, 1);
     dx(1:3) = dtheta;
     dx(4:6) = M \ (tau - C - G);
+
+    desiredJointPositions = [desiredJointPositions; theta_d']; % Store the desired joint positions for plotting
+    jointTorques = [jointTorques; tau']; % Store the joint torques for plotting
 end
