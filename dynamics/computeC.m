@@ -1,7 +1,13 @@
 function C = computeC(q, qd)
-    % computeC returns the Coriolis & centrifugal vector C(q, q̇)
-    % q, qd, are 3x1 vectors: [q1; q2; q3], [q1_d; q2_d; q3_d]
-    
+% Computes the Coriolis and centrifugal vector for a 3-DOF arm.
+%
+% Inputs:
+%   q   - Joint positions [q1; q2; q3] (3×1)
+%   qd  - Joint velocities [q1_dot; q2_dot; q3_dot] (3×1)
+%
+% Output:
+%   C   - Coriolis and centrifugal vector (3×1)
+
     q2 = q(2); 
     q3 = q(3);
     q1_d = qd(1); 

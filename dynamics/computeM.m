@@ -1,6 +1,11 @@
 function M = computeM(q)
-    % computeM returns the inertia matrix M(q)
-    % q is a 3x1 vector
+% Computes the joint-space inertia matrix M(q) for a 3-DOF robotic arm.
+%
+% Input:
+%   q - Joint positions [q1; q2; q3] (3×1)
+%
+% Output:
+%   M - Inertia matrix (3×3)
     
     q2 = q(2); 
     q3 = q(3);

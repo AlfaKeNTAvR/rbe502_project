@@ -1,15 +1,4 @@
 function robot = make_robot()
-%MAKE_ROBOT Creates the kinematic structure of the robot used in homework 5, problem 1.
-%
-%   This is a factory function that creates the robot used in the homework.
-%
-%   Inputs: none
-%
-%   Output: robot - the robot structure, created using Peter Corke's
-%   robotics toolbox
-%
-%   Author: L. Fichera <lfichera@wpi.edu>
-%   Last modified: 4/05/2023
 
 %% Create the manipulator
 L1 = 0.3;  % Lenght of Link 1 [m]
