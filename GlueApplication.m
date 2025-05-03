@@ -33,15 +33,13 @@ n = size(S,2); % read the number of joints
 %% Control the motion of the robot between 2 set points
 fprintf('----------------------Kinematic Control of a 3-DoF Arm--------------------\n');
 
-path = [0.3 0.0 0.2; ...
-        0.0 0.3 0.2; ...
-        0 0.3 0.0; ...
-        0.0 0.3 0.2; ...
-        0.3 0.0 0.2; ...
-        0.0 -0.3 0.2; ...
-        0.0 -0.3 0.0; ...
-        0.0 -0.3 0.2; ...
-        0.3 0.0 0.2; ...
+path = [0.2 -0.15 0.2; ...
+        0.2 -0.15 0.0; ...
+        -0.2 -0.15 0.0; ...
+        -0.2 -0.3 0.1; ...
+        0.2 -0.3 0.1; ...
+        0.2 -0.15 0.0; ...
+        0.2 -0.15 0.2; ...
         ]';
 nPts = size(path,2);
 Time = 5;
@@ -117,8 +115,8 @@ for ii = 1 : nPts
         clear X  % Clear the variable 'X' to asvoid conflicts with the function
 
         % Load on the end-effector [kg]
-        load = 1.0; 
-        controller = 'CTC'; % Choose the controller: 'PD', 'PID', or 'CTC'
+        load = 0.15; 
+        controller = 'PID'; % Choose the controller: 'PD', 'PID', or 'CTC'
 
         %% PD Control:
         if strcmp(controller, 'PD')
@@ -185,7 +183,7 @@ fprintf('\nDone. Simulating the robot...');
 animateRobot = true; % Set to true to animate the robot
 
 if animateRobot
-    title(sprintf('Pick and Place: \n%s, Load: %.1f kg', controller, load));
+    title(sprintf('3D glue application: %s', controller));
 
     % Start a timer:
     tic
@@ -197,8 +195,9 @@ if animateRobot
     idx = round(linspace(1, N, n_frames));
     frames = trajectory(idx, 1:3);
 
-    movie_name = sprintf('movies/pnp/pick_and_place_%s_%.1f_kg.mp4', controller, load);
-    robot.plot(frames, 'fps', fps, 'trail', {'r', 'LineWidth', 2}, 'view', [235, 30], 'nobase', 'workspace', [-0.75 0.75 -0.75 0.75 -0.05 0.5], 'movie', movie_name);
+    movie_name = sprintf('movies/glue/glue_application_%s.mp4', controller);
+    robot.plot(frames, 'fps', fps, 'trail', {'r', 'LineWidth', 2}, 'view', [205, 30], 'workspace', [-0.75 0.75 -0.75 0.75 -0.05 0.5], 'movie', movie_name);
+    % End the timer:
     toc
     % Show the duration:
     fprintf('Animation time: %.2f seconds\n', toc);
@@ -206,7 +205,7 @@ if animateRobot
 end
 
 
-plotting = true; % Set to true to plot the results
+plotting = false; % Set to true to plot the results
 
 if plotting
     %% Plot Joint Positions

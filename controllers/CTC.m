@@ -17,7 +17,7 @@ function tau = CTC(theta_d, dtheta_d, ddtheta_d, theta, dtheta, M, C, G)
     global jointPositionErrors;
     
     Kp = diag([1.0 1.0 1.0]);
-    Kv = diag([0.5 0.5 0.5]);
+    Kv = diag([1.0 1.0 1.0]);
     
     e = theta_d - theta;
     de = dtheta_d - dtheta;
