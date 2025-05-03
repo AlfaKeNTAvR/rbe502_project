@@ -8,7 +8,7 @@ g t real; % gravity and time
 %% Parameters:
 m1 = 0.5; % Mass of Link 1 [kg]
 m2 = 0.5; % Mass of Link 2 [kg]
-m3 = 0.25; % Mass of Link 3 [kg]
+% m3 = 0.25; % Mass of Link 3 [kg]
 
 l1 = 0.3; % Length of Link 1 [m]
 l2 = 0.3; % Length of Link 2 [m]

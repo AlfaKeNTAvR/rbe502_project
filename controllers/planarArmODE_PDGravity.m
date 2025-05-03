@@ -15,10 +15,11 @@ function dx = planarArmODE_PDGravity(t, x, q_des)
     dtheta_des = [0; 0; 0];
     theta = x(1:3);
     dtheta = x(4:6);
+    load = 0.0;
     
-    M = computeM(theta);
-    C = computeC(theta, dtheta);
-    G = computeG(theta);
+    M = computeM(theta, load);
+    C = computeC(theta, dtheta, load);
+    G = computeG(theta, load);
     tau = PD(theta_des, dtheta_des, theta, dtheta) + G;
     
     dx = zeros(6,1);

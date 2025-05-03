@@ -1,4 +1,4 @@
-function G = computeG(q)
+function G = computeG(q, load)
 % Computes the gravity torque vector G(q) for a 3-DOF robotic arm.
 %
 % Input:
@@ -6,11 +6,14 @@ function G = computeG(q)
 %
 % Output:
 %   G - Gravity torque vector (3×1)
-    
+
+
+    m3 = 0.25 + load;    
     q2 = q(2);
     q3 = q(3);
-    
+
     G = [0;
-      (2943*cos(q2 + q3))/8000 + (8829*cos(q2))/4000; 
-      (2943*cos(q2 + q3))/8000];
-    end
+        (2943*cos(q2))/2000 + (2943*m3*cos(q2 + q3))/2000 + (2943*m3*cos(q2))/1000;
+        (2943*m3*cos(q2 + q3))/2000];
+
+end
