@@ -5,6 +5,14 @@ addpath('dynamics');
 addpath('kinematics');
 addpath('kinematics/lib');
 
+%% Simulation parameters:
+controller = 'CTC'; % Choose between 'PD', 'PID', or 'CTC'
+load = 1.0; % Load on the end-effector [kg]
+animateRobot = true; % Set to true to animate the robot
+saveMovie = false; % Set to true to save the animation
+plotting = true; % Set to true to plot the results
+
+
 global I; % Initialize the global variable I for integral state
 
 %% Data logging for plotting
@@ -114,10 +122,6 @@ for ii = 1 : nPts
         simulationTime = simulationTime + tf; % Update the total simulation time
         clear X  % Clear the variable 'X' to asvoid conflicts with the function
 
-        % Load on the end-effector [kg]
-        load = 0.15; 
-        controller = 'PID'; % Choose the controller: 'PD', 'PID', or 'CTC'
-
         %% PD Control:
         if strcmp(controller, 'PD')
             [T, X] = ode45(@(t, x) planarArmODE_PDGravity(t, x, q_des, load), [0 tf], X0);
@@ -180,8 +184,6 @@ end
 fprintf('\nDone. Simulating the robot...');
 
 %% Animate the robot
-animateRobot = true; % Set to true to animate the robot
-
 if animateRobot
     title(sprintf('3D glue application: %s', controller));
 
@@ -195,8 +197,14 @@ if animateRobot
     idx = round(linspace(1, N, n_frames));
     frames = trajectory(idx, 1:3);
 
-    movie_name = sprintf('movies/glue/glue_application_%s.mp4', controller);
-    robot.plot(frames, 'fps', fps, 'trail', {'r', 'LineWidth', 2}, 'view', [205, 30], 'workspace', [-0.75 0.75 -0.75 0.75 -0.05 0.5], 'movie', movie_name);
+    if saveMovie
+        movie_name = sprintf('movies/glue/glue_application_%s.mp4', controller);
+        robot.plot(frames, 'fps', fps, 'trail', {'r', 'LineWidth', 2}, 'view', [205, 30], 'workspace', [-0.75 0.75 -0.75 0.75 -0.05 0.5], 'movie', movie_name);
+    else
+        robot.plot(frames, 'fps', fps, 'trail', {'r', 'LineWidth', 2}, 'view', [205, 30], 'workspace', [-0.75 0.75 -0.75 0.75 -0.05 0.5]);
+    end
+
+    
     % End the timer:
     toc
     % Show the duration:
@@ -204,8 +212,6 @@ if animateRobot
     fprintf('\nDone.\n');
 end
 
-
-plotting = false; % Set to true to plot the results
 
 if plotting
     %% Plot Joint Positions

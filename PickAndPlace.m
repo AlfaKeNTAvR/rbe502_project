@@ -5,6 +5,14 @@ addpath('dynamics');
 addpath('kinematics');
 addpath('kinematics/lib');
 
+%% Simulation parameters:
+controller = 'CTC'; % Choose between 'PD', 'PID', or 'CTC'
+load = 1.0; % Load on the end-effector [kg]
+animateRobot = false; % Set to true to animate the robot
+saveMovie = false; % Set to true to save the animation
+plotting = true; % Set to true to plot the results
+
+
 global I; % Initialize the global variable I for integral state
 
 %% Data logging for plotting
@@ -116,10 +124,6 @@ for ii = 1 : nPts
         simulationTime = simulationTime + tf; % Update the total simulation time
         clear X  % Clear the variable 'X' to asvoid conflicts with the function
 
-        % Load on the end-effector [kg]
-        load = 1.0; 
-        controller = 'CTC'; % Choose the controller: 'PD', 'PID', or 'CTC'
-
         %% PD Control:
         if strcmp(controller, 'PD')
             [T, X] = ode45(@(t, x) planarArmODE_PDGravity(t, x, q_des, load), [0 tf], X0);
@@ -182,8 +186,6 @@ end
 fprintf('\nDone. Simulating the robot...');
 
 %% Animate the robot
-animateRobot = true; % Set to true to animate the robot
-
 if animateRobot
     title(sprintf('Pick and Place: \n%s, Load: %.1f kg', controller, load));
 
@@ -197,16 +199,18 @@ if animateRobot
     idx = round(linspace(1, N, n_frames));
     frames = trajectory(idx, 1:3);
 
-    movie_name = sprintf('movies/pnp/pick_and_place_%s_%.1f_kg.mp4', controller, load);
-    robot.plot(frames, 'fps', fps, 'trail', {'r', 'LineWidth', 2}, 'view', [235, 30], 'nobase', 'workspace', [-0.75 0.75 -0.75 0.75 -0.05 0.5], 'movie', movie_name);
+    if saveMovie
+        movie_name = sprintf('movies/pnp/pick_and_place_%s_%.1f_kg.mp4', controller, load);
+        robot.plot(frames, 'fps', fps, 'trail', {'r', 'LineWidth', 2}, 'view', [235, 30], 'nobase', 'workspace', [-0.75 0.75 -0.75 0.75 -0.05 0.5], 'movie', movie_name);
+    else
+        robot.plot(frames, 'fps', fps, 'trail', {'r', 'LineWidth', 2}, 'view', [235, 30], 'nobase', 'workspace', [-0.75 0.75 -0.75 0.75 -0.05 0.5]);
+    end
+
     toc
     % Show the duration:
     fprintf('Animation time: %.2f seconds\n', toc);
     fprintf('\nDone.\n');
 end
-
-
-plotting = true; % Set to true to plot the results
 
 if plotting
     %% Plot Joint Positions
@@ -220,7 +224,7 @@ if plotting
     % Interpolate each joint
     desiredJointPositions = interp1(t_des, desiredJointPositions, t_traj);
 
-    figure('Name', 'Joint 1 Positions');
+    figure('Name', 'Joint 1 Position');
     plot(times, trajectory(:,1), 'b-', 'LineWidth', 1); hold on;
     plot(times, desiredJointPositions(:,1), 'r-', 'LineWidth', 1);
     xlabel('Time (s)');
@@ -229,7 +233,7 @@ if plotting
     title('Joint 1 Positions');
     grid on;
 
-    figure('Name', 'Joint 2 Positions');
+    figure('Name', 'Joint 2 Position');
     plot(times, trajectory(:,2), 'b-', 'LineWidth', 1); hold on;
     plot(times, desiredJointPositions(:,2), 'r-', 'LineWidth', 1);
     xlabel('Time (s)');
@@ -238,7 +242,7 @@ if plotting
     title('Joint 2 Positions');
     grid on;
 
-    figure('Name', 'Joint 3 Positions');
+    figure('Name', 'Joint 3 Position');
     plot(times, trajectory(:,3), 'b-', 'LineWidth', 1); hold on;
     plot(times, desiredJointPositions(:,3), 'r-', 'LineWidth', 1);
     xlabel('Time (s)');
