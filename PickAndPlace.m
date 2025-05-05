@@ -8,7 +8,7 @@ addpath('kinematics/lib');
 %% Simulation parameters:
 controller = 'CTC'; % Choose between 'PD', 'PID', or 'CTC'
 load = 1.0; % Load on the end-effector [kg]
-animateRobot = false; % Set to true to animate the robot
+animateRobot = true; % Set to true to animate the robot
 saveMovie = false; % Set to true to save the animation
 plotting = true; % Set to true to plot the results
 
@@ -224,7 +224,9 @@ if plotting
     % Interpolate each joint
     desiredJointPositions = interp1(t_des, desiredJointPositions, t_traj);
 
-    figure('Name', 'Joint 1 Position');
+    
+    figure('Name', 'Joint 1 Positions', 'Position', [100, 25, 400, 775]);
+    subplot(3,1,1);
     plot(times, trajectory(:,1), 'b-', 'LineWidth', 1); hold on;
     plot(times, desiredJointPositions(:,1), 'r-', 'LineWidth', 1);
     xlabel('Time (s)');
@@ -233,7 +235,7 @@ if plotting
     title('Joint 1 Positions');
     grid on;
 
-    figure('Name', 'Joint 2 Position');
+    subplot(3,1,2);
     plot(times, trajectory(:,2), 'b-', 'LineWidth', 1); hold on;
     plot(times, desiredJointPositions(:,2), 'r-', 'LineWidth', 1);
     xlabel('Time (s)');
@@ -242,7 +244,7 @@ if plotting
     title('Joint 2 Positions');
     grid on;
 
-    figure('Name', 'Joint 3 Position');
+    subplot(3,1,3);
     plot(times, trajectory(:,3), 'b-', 'LineWidth', 1); hold on;
     plot(times, desiredJointPositions(:,3), 'r-', 'LineWidth', 1);
     xlabel('Time (s)');
@@ -262,22 +264,36 @@ if plotting
     % Interpolate each joint
     jointPositionErrors = interp1(t_des, jointPositionErrors, t_traj);
 
-    figure('Name', 'Joint 1 Position Error');
-    plot(times, jointPositionErrors(:,1), 'b-', 'LineWidth', 1);
+    figure('Name', 'Joint Position Errors', 'Position', [100, 25, 400, 775]);
+    subplot(3,1,1);
+    plot(times, jointPositionErrors(:,1), 'b-', 'LineWidth', 1) ; hold on;
+    plot(times, ones(size(times, 1)) * 0.05, 'r--', 'LineWidth', 1);
+    plot(times, ones(size(times, 1)) * -0.05, 'r--', 'LineWidth', 1);
     xlabel('Time (s)');
     ylabel('Error (rad)');
+    legend('Error', '+5%', '-5%');
     title('Joint 1 Position Error');
     grid on;
 
-    figure('Name', 'Joint 2 Position Error');
-    plot(times, jointPositionErrors(:,2), 'r-', 'LineWidth', 1);
+    subplot(3,1,2);
+    plot(times, jointPositionErrors(:,2), 'r-', 'LineWidth', 1); hold on;
+    plot(times, ones(size(times, 1)) * 0.05, 'k--', 'LineWidth', 1);
+    plot(times, ones(size(times, 1)) * -0.05, 'k--', 'LineWidth', 1);
+    xlabel('Time (s)');
+    ylabel('Error (rad)');
+    legend('Error', '+5%', '-5%');
     xlabel('Time (s)');
     ylabel('Error (rad)');
     title('Joint 2 Position Error');
     grid on;
 
-    figure('Name', 'Joint 3 Position Error');
-    plot(times, jointPositionErrors(:,3), 'k-', 'LineWidth', 1);
+    subplot(3,1,3);
+    plot(times, jointPositionErrors(:,3), 'k-', 'LineWidth', 1); hold on;
+    plot(times, ones(size(times, 1)) * 0.05, 'b--', 'LineWidth', 1);
+    plot(times, ones(size(times, 1)) * -0.05, 'b--', 'LineWidth', 1);
+    xlabel('Time (s)');
+    ylabel('Error (rad)');
+    legend('Error', '+5%', '-5%');
     xlabel('Time (s)');
     ylabel('Error (rad)');
     title('Joint 3 Position Error');
@@ -285,21 +301,22 @@ if plotting
 
 
     %% Plot Joint Velocities
-    figure('Name', 'Joint 1 Velocity');
+    figure('Name', 'Joint Velocities', 'Position', [100, 25, 400, 775]);
+    subplot(3,1,1);
     plot(times, trajectory(:,4), 'b-', 'LineWidth', 1);
     xlabel('Time (s)');
     ylabel('Velocity (rad/s)');
     title('Joint 1 Velocity');
     grid on;
 
-    figure('Name', 'Joint 2 Velocity');
+    subplot(3,1,2);
     plot(times, trajectory(:,5), 'r-', 'LineWidth', 1);
     xlabel('Time (s)');
     ylabel('Velocity (rad/s)');
     title('Joint 2 Velocity');
     grid on;
 
-    figure('Name', 'Joint 3 Velocity');
+    subplot(3,1,3);
     plot(times, trajectory(:,6), 'k-', 'LineWidth', 1);
     xlabel('Time (s)');
     ylabel('Velocity (rad/s)');
@@ -308,7 +325,7 @@ if plotting
 
     %% Plot Joint Torques
     N_desired = size(jointTorques, 1);
-    N_traj = size(trajectory, 1);               
+    N_traj = size(trajectory, 1);   
 
     % Generate uniform time vectors
     t_des = linspace(0, 1, N_desired); % normalized time
@@ -317,21 +334,25 @@ if plotting
     % Interpolate each joint
     jointTorques = interp1(t_des, jointTorques, t_traj);
 
-    figure('Name', 'Joint 1 Torque');
+    figure('Name', 'Joint Torques', 'Position', [100, 25, 400, 775]);
+    % Joint 1 Torque
+    subplot(3,1,1);
     plot(times, jointTorques(:,1), 'b-', 'LineWidth', 1);
     xlabel('Time (s)');
     ylabel('Torque (Nm)');
     title('Joint 1 Torque');
     grid on;
 
-    figure('Name', 'Joint 2 Torque');
+    % Joint 2 Torque
+    subplot(3,1,2);
     plot(times, jointTorques(:,2), 'r-', 'LineWidth', 1);
     xlabel('Time (s)');
     ylabel('Torque (Nm)');
     title('Joint 2 Torque');
     grid on;
 
-    figure('Name', 'Joint 3 Torque');
+    % Joint 3 Torque
+    subplot(3,1,3);
     plot(times, jointTorques(:,3), 'k-', 'LineWidth', 1);
     xlabel('Time (s)');
     ylabel('Torque (Nm)');
